@@ -30,8 +30,9 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('xtream.login') }}">
+                    <form method="POST" action="{{ url('/') }}" id="loginForm">
                         @csrf
+                        <div id="formDebug" class="alert alert-info" style="display: none;"></div>
 
                         <div class="form-group row">
                             <label for="dns" class="col-md-4 col-form-label text-md-right">{{ __('DNS/Server URL') }}</label>

@@ -243,7 +243,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
 //Site
 
 Route::get('/', 'XtreamController@showLoginForm')->name('xtream.form');
-Route::post('/', 'XtreamController@login')->name('xtream.login');
+Route::post('/', 'XtreamController@login')->name('xtream.login')->withoutMiddleware(['web']);
 
 Route::middleware(['xtream.auth'])->group(function () {
     // Dashboard

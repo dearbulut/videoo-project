@@ -97,5 +97,42 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                $('#formDebug').show().text('Form gönderiliyor...');
+                
+                var formData = {
+                    _token: $('input[name="_token"]').val(),
+                    dns: $('#dns').val(),
+                    username: $('#username').val(),
+                    password: $('#password').val()
+                };
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#formDebug').removeClass('alert-danger').addClass('alert-success').text('Başarılı! Yönlendiriliyor...');
+                        window.location.href = '/dashboard';
+                    },
+                    error: function(xhr) {
+                        var errorMessage = 'Bir hata oluştu: ';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage += xhr.responseJSON.message;
+                        } else {
+                            errorMessage += xhr.statusText;
+                        }
+                        $('#formDebug').removeClass('alert-info').addClass('alert-danger').text(errorMessage);
+                        console.error('XHR Response:', xhr);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

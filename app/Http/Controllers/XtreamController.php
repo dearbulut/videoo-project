@@ -66,7 +66,15 @@ class XtreamController extends Controller
 
     public function login(Request $request)
     {
-        \Log::info('Login attempt', $request->all());
+        \Log::info('Login attempt started', $request->all());
+        
+        // Debug: Log all request details
+        \Log::debug('Request details', [
+            'method' => $request->method(),
+            'url' => $request->url(),
+            'headers' => $request->headers->all(),
+            'all_data' => $request->all()
+        ]);
         
         try {
             $request->validate([
