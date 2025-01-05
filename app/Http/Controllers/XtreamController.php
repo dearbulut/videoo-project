@@ -66,17 +66,21 @@ class XtreamController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'dns' => 'required|url',
-            'username' => 'required',
-            'password' => 'required'
-        ]);
-
-        $this->baseUrl = rtrim($request->dns, '/');
-        $this->username = $request->username;
-        $this->password = $request->password;
-
+        \Log::info('Login attempt', $request->all());
+        
         try {
+            $request->validate([
+                'dns' => 'required|url',
+                'username' => 'required',
+                'password' => 'required'
+            ]);
+
+            $this->baseUrl = rtrim($request->dns, '/');
+            $this->username = $request->username;
+            $this->password = $request->password;
+
+            \Log::info('Making API request to: ' . $this->baseUrl);
+
             $response = $this->client->get("{$this->baseUrl}/player_api.php", [
                 'query' => [
                     'username' => $this->username,
@@ -85,6 +89,7 @@ class XtreamController extends Controller
             ]);
 
             $data = json_decode($response->getBody(), true);
+            \Log::info('API Response:', ['data' => $data]);
 
             if (isset($data['user_info'])) {
                 session([
@@ -94,12 +99,27 @@ class XtreamController extends Controller
                     'xtream_user_info' => $data['user_info']
                 ]);
 
+                \Log::info('Login successful, redirecting to dashboard');
                 return redirect()->route('dashboard');
             }
 
+            \Log::warning('Invalid credentials');
             return back()->withErrors(['message' => 'Invalid credentials']);
-        } catch (\Exception $e) {
+
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            \Log::error('API Connection failed', [
+                'message' => $e->getMessage(),
+                'url' => $this->baseUrl,
+                'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null
+            ]);
             return back()->withErrors(['message' => 'Connection failed: ' . $e->getMessage()]);
+
+        } catch (\Exception $e) {
+            \Log::error('Unexpected error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(['message' => 'An unexpected error occurred: ' . $e->getMessage()]);
         }
     }
 
