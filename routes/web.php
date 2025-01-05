@@ -247,7 +247,7 @@ Route::post('/', 'XtreamController@login')->name('xtream.login')->withoutMiddlew
 
 Route::middleware(['xtream.auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', 'XtreamController@getLiveTV')->name('dashboard');
+    Route::get('/dashboard', 'XtreamController@dashboard')->name('dashboard');
     
     // Live TV Routes
     Route::prefix('live-tv')->group(function () {

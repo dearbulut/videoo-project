@@ -141,6 +141,21 @@ class XtreamController extends Controller
         }
     }
 
+    public function dashboard()
+    {
+        try {
+            $liveCategories = $this->getLiveCategories();
+            $liveChannels = $this->getLiveTV();
+            $vodCategories = $this->getVODCategories();
+            $movies = $this->getMovies();
+            
+            return view('dashboard', compact('liveCategories', 'liveChannels', 'vodCategories', 'movies'));
+        } catch (\Exception $e) {
+            \Log::error('Dashboard error: ' . $e->getMessage());
+            return view('dashboard')->withErrors(['error' => 'Could not load dashboard content']);
+        }
+    }
+
     // Live TV Methods
     public function getLiveCategories()
     {
@@ -158,6 +173,11 @@ class XtreamController extends Controller
         }
 
         $channels = $this->makeRequest('get_live_streams', $params);
+        
+        if (request()->wantsJson()) {
+            return response()->json($channels);
+        }
+        
         return view('livetv.index', compact('channels'));
     }
 
@@ -186,6 +206,11 @@ class XtreamController extends Controller
         }
 
         $movies = $this->makeRequest('get_vod_streams', $params);
+        
+        if (request()->wantsJson()) {
+            return response()->json($movies);
+        }
+        
         return view('movies.index', compact('movies'));
     }
 
