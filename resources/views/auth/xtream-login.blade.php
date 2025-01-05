@@ -38,8 +38,7 @@
 
                             <div class="col-md-6">
                                 <input id="dns" type="url" class="form-control @error('dns') is-invalid @enderror" 
-                                    name="dns" value="{{ old('dns') }}" required autocomplete="dns" autofocus
-                                    placeholder="http://example.com:port">
+                                    name="dns" value="{{ old('dns', 'http://megaott.live:8080') }}" required autocomplete="dns" autofocus>
                             </div>
                         </div>
 
@@ -48,7 +47,7 @@
 
                             <div class="col-md-6">
                                 <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" 
-                                    name="username" value="{{ old('username') }}" required autocomplete="username">
+                                    name="username" value="{{ old('username', 'wVeSSjfRRfbe') }}" required autocomplete="username">
                             </div>
                         </div>
 
@@ -57,7 +56,7 @@
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" 
-                                    name="password" required autocomplete="current-password">
+                                    name="password" value="tfeqGzmqvWWY" required autocomplete="current-password">
                             </div>
                         </div>
 

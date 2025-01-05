@@ -81,10 +81,20 @@ class XtreamController extends Controller
 
             \Log::info('Making API request to: ' . $this->baseUrl);
 
-            $response = $this->client->get("{$this->baseUrl}/player_api.php", [
-                'query' => [
-                    'username' => $this->username,
-                    'password' => $this->password
+            $apiUrl = "{$this->baseUrl}/player_api.php";
+            $queryParams = [
+                'username' => $this->username,
+                'password' => $this->password
+            ];
+
+            \Log::info('Full API URL: ' . $apiUrl . '?' . http_build_query($queryParams));
+
+            $response = $this->client->get($apiUrl, [
+                'query' => $queryParams,
+                'verify' => false,
+                'timeout' => 30,
+                'headers' => [
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
                 ]
             ]);
 
@@ -103,8 +113,8 @@ class XtreamController extends Controller
                 return redirect()->route('dashboard');
             }
 
-            \Log::warning('Invalid credentials');
-            return back()->withErrors(['message' => 'Invalid credentials']);
+            \Log::warning('Invalid credentials or missing user_info in response');
+            return back()->withErrors(['message' => 'Invalid credentials or server error']);
 
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             \Log::error('API Connection failed', [
